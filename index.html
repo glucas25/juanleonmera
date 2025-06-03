@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad Educativa Fiscal Juan León Mera</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .logo {
+            display: inline-block;
+            background: white;
+            color: #1e3c72;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-menu {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 30px;
+            min-height: 200px;
+        }
+
+        .sidebar h3 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .sidebar-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(30, 60, 114, 0.1);
+            color: #495057;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-item:hover {
+            color: #1e3c72;
+            padding-left: 10px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 0;
+        }
+
+        .calendar-section {
+            padding: 40px;
+        }
+
+        .calendar-title {
+            color: #1e3c72;
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border-radius: 15px;
+            font-weight: 500;
+        }
+
+        .status-indicator.loading {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        }
+
+        .status-indicator.error {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .calendar-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+        }
+
+        .table-header th {
+            padding: 20px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table-row {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .table-row:hover {
+            background: linear-gradient(90deg, rgba(30, 60, 114, 0.05) 0%, rgba(42, 82, 152, 0.05) 100%);
+            transform: translateX(5px);
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-row td {
+            padding: 20px 15px;
+            color: #495057;
+            vertical-align: top;
+        }
+
+        .period-cell {
+            font-weight: 600;
+            color: #1e3c72;
+            background: rgba(30, 60, 114, 0.05);
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .date-cell {
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .activity-cell {
+            color: #495057;
+            line-height: 1.5;
+        }
+
+        .evaluacion-badge {
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            margin: 2px;
+        }
+
+        .activity-badge {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #495057;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            margin: 2px;
+        }
+
+        .refresh-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            transition: all 0.3s ease;
+            font-size: 18px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-3px) rotate(180deg);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                order: 2;
+            }
+            
+            .nav-links {
+                justify-content: center;
+            }
+            
+            .calendar-table {
+                font-size: 14px;
+            }
+            
+            .table-header th,
+            .table-row td {
+                padding: 15px 10px;
+            }
+
+            .refresh-btn {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-circle" style="width: 60px; height: 60px; top: 10%; left: 10%; animation-delay: 0s;"></div>
+        <div class="floating-circle" style="width: 80px; height: 80px; top: 20%; right: 15%; animation-delay: 2s;"></div>
+        <div class="floating-circle" style="width: 40px; height: 40px; bottom: 20%; left: 20%; animation-delay: 4s;"></div>
+        <div class="floating-circle" style="width: 70px; height: 70px; bottom: 10%; right: 10%; animation-delay: 1s;"></div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <div class="logo">jlm</div>
+            <div style="position: relative; z-index: 1;">
+                <div style="font-size: 26px; opacity: 0.9; margin-bottom: 5px;">Unidad Educativa Fiscal Juan León Mera</div>
+            </div>
+        </header>
+
+        <nav class="nav-menu">
+            <div class="nav-links">
+                <a href="#" style="background: rgba(255, 255, 255, 0.2);">La ESPOL</a>
+                <a href="#">Educación</a>
+                <a href="#">Vida politécnica</a>
+                <a href="#">Investigación</a>
+                <a href="#">Nuestra Huella</a>
+                <a href="#">Transparencia</a>
+            </div>
+        </nav>
+
+        <div class="main-content">
+            <aside class="sidebar">
+                <h3>Navegación</h3>
+                <div class="sidebar-item">📋 Momento Cívico</div>
+                <div class="sidebar-item">📅 Calendario Académico</div>
+                <div class="sidebar-item" onclick="refreshData()">🔄 Actualizar Datos</div>
+            </aside>
+
+            <main class="calendar-section">
+                <h1 class="calendar-title">AÑO LECTIVO 2025 - 2026</h1>
+                <div id="status-indicator" class="status-indicator loading">
+                    <span class="loading-spinner"></span>
+                    <span>Cargando datos desde Google Sheets...</span>
+                </div>
+
+                <table class="calendar-table">
+                    <thead class="table-header">
+                        <tr>
+                            <th>Etapa</th>
+                            <th>Fecha</th>
+                            <th>Actividades de Grado</th>
+                            <th>Procesos de Grado</th>
+                            <th>Actividades de Formación Técnica y Tecnológica</th>
+                        </tr>
+                    </thead>
+                    <tbody id="calendar-tbody">
+                        <!-- Los datos se cargarán únicamente desde Google Sheets -->
+                    </tbody>
+                </table>
+            </main>
+        </div>
+    </div>
+
+    <!-- Refresh Button -->
+    <button class="refresh-btn" onclick="refreshData()" title="Actualizar datos desde Google Sheets">
+        🔄
+    </button>
+
+    <script>
+        // URL del Google Sheets configurada automáticamente
+        
+        const SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTnOBTRyA6HThEYHCvUcSnt8Z3w541l7j0OlJ3vYOzDowGEX4gSKdRsIl24cSEhm5BaK3MYgQB5vTJu/pub?gid=0&single=true&output=csv';
+
+
+        let refreshInterval;
+
+        // Función para cargar datos automáticamente al iniciar
+        async function loadInitialData() {
+            try {
+                await loadDataFromSheets();
+                
+                // Iniciar auto-refresh cada 5 minutos
+                startAutoRefresh();
+                
+            } catch (error) {
+                console.error('Error cargando datos iniciales:', error);
+                showStatus('❌ Error al cargar los datos iniciales', 'error');
+            }
+        }
+
+        // Función principal para cargar datos desde Google Sheets
+        async function loadDataFromSheets() {
+            showStatus('🔄 Cargando datos...', 'loading');
+            
+            try {
+                const response = await fetch(SHEETS_CSV_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: Error al acceder a Google Sheets`);
+                }
+                
+                const csvText = await response.text();
+                const parsedData = parseCSV(csvText);
+                
+                if (parsedData.length === 0) {
+                    throw new Error('No se encontraron datos válidos en el documento');
+                }
+                
+                loadDataToTable(parsedData);
+                showStatus(`✅ Datos cargados correctamente (${parsedData.length} registros)`, 'success');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus(`❌ Error: ${error.message}`, 'error');
+                
+                // Mostrar tabla vacía si hay error
+                showEmptyTable();
+            }
+        }
+
+        // Función para parsear CSV
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const data = [];
+            
+            // Omitir la primera línea (headers) si existe
+            const startIndex = lines[0] && (lines[0].toLowerCase().includes('periodo') || lines[0].toLowerCase().includes('fecha')) ? 1 : 0;
+            
+            for (let i = startIndex; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const values = parseCSVLine(line);
+                
+                if (values.length >= 3) {
+                    data.push({
+                        periodo: values[0] || '',
+                        fechas: values[1] || '',
+                        actGrado: values[2] || '',
+                        procGrado: values[3] || '',
+                        actTecnica: values[4] || ''
+                    });
+                }
+            }
+            
+            return data;
+        }
+
+        // Función para parsear una línea CSV
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                
+                if (char === '"') {
+                    if (inQuotes && line[i + 1] === '"') {
+                        current += '"';
+                        i++; // Skip next quote
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            
+            result.push(current.trim());
+            return result;
+        }
+
+        // Función para cargar datos en la tabla
+        function loadDataToTable(data) {
+            const tbody = document.getElementById('calendar-tbody');
+            tbody.innerHTML = '';
+            
+            data.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.className = 'table-row';
+                
+                // Aplicar animación de entrada
+                row.style.opacity = '0';
+                row.style.transform = 'translateY(20px)';
+                
+                row.innerHTML = `
+                    <td>${item.periodo ? `<div class="period-cell">${item.periodo}</div>` : ''}</td>
+                    <td class="date-cell">${item.fechas}</td>
+                    <td class="activity-cell">${formatActivity(item.actGrado)}</td>
+                    <td class="activity-cell">${formatActivity(item.procGrado)}</td>
+                    <td class="activity-cell">${formatActivity(item.actTecnica)}</td>
+                `;
+                
+                tbody.appendChild(row);
+                
+                // Animar entrada
+                setTimeout(() => {
+                    row.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    row.style.opacity = '1';
+                    row.style.transform = 'translateY(0)';
+                }, index * 50);
+            });
+            
+            // Aplicar efectos hover
+            applyTableEffects();
+        }
+
+        // Función para formatear actividades con badges
+        function formatActivity(text) {
+            if (!text) return '';
+            
+            // Detectar si es evaluaciones
+            if (text.toUpperCase().includes('EVALUACIONES')) {
+                return `<span class="evaluacion-badge">${text}</span>`;
+            }
+            
+            // Dividir por separadores comunes y crear badges
+            const separators = [' / ' , ', '];
+            let activities = [text];
+            
+            separators.forEach(sep => {
+                const temp = [];
+                activities.forEach(activity => {
+                    temp.push(...activity.split(sep));
+                });
+                activities = temp;
+            });
+            
+            return activities
+                .filter(activity => activity.trim())
+                .map(activity => {
+                    const trimmed = activity.trim();
+                    if (trimmed.toUpperCase().includes('EVALUACIONES')) {
+                        return `<span class="evaluacion-badge">${trimmed}</span>`;
+                    } else {
+                        return `<span class="activity-badge">${trimmed}</span>`;
+                    }
+                })
+                .join(' ');
+        }
+
+        // Función para mostrar estado
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('status-indicator');
+            statusEl.className = `status-indicator ${type}`;
+            
+            if (type === 'loading') {
+                statusEl.innerHTML = `<span class="loading-spinner"></span><span>${message}</span>`;
+            } else {
+                statusEl.innerHTML = `<span>${message}</span>`;
+            }
+            
+            // Ocultar después de 5 segundos si es éxito
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Función para actualizar datos
+        async function refreshData() {
+            const refreshBtn = document.querySelector('.refresh-btn');
+            refreshBtn.style.transform = 'rotate(360deg)';
+            
+            try {
+                await loadDataFromSheets();
+            } finally {
+                setTimeout(() => {
+                    refreshBtn.style.transform = 'rotate(0deg)';
+                }, 500);
+            }
+        }
+
+        // Función para mostrar tabla vacía en caso de error
+        function showEmptyTable() {
+            const tbody = document.getElementById('calendar-tbody');
+            tbody.innerHTML = `
+                <tr class="table-row">
+                    <td colspan="5" style="text-align: center; padding: 40px; color: #6c757d;">
+                        <div style="font-size: 18px; margin-bottom: 10px;">📊</div>
+                        <div>No se pudieron cargar los datos desde Google Sheets</div>
+                        <div style="font-size: 14px; margin-top: 10px;">
+                            Haga clic en el botón de actualizar para intentar nuevamente
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Función para iniciar auto-refresh
+        function startAutoRefresh() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            
+            refreshInterval = setInterval(() => {
+                console.log('Auto-refresh ejecutándose...');
+                loadDataFromSheets();
+            }, 300000); // 5 minutos
+        }
+
+        // Función para aplicar efectos a la tabla
+        function applyTableEffects() {
+            const rows = document.querySelectorAll('.table-row');
+            rows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.boxShadow = '0 5px 15px rgba(30, 60, 114, 0.1)';
+                });
+                
+                row.addEventListener('mouseleave', function() {
+                    this.style.boxShadow = 'none';
+                });
+            });
+        }
+
+        // Inicializar cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            loadInitialData();
+        });
+
+        // Limpiar interval al cerrar la página
+        window.addEventListener('beforeunload', function() {
+            if (refreshInterval) clearInterval(refreshInterval);
+        });
+    </script>
+</body>
+</html>
